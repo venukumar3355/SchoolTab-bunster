@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "module": "src/main.ts",
+  "type": "module",
+  "scripts": {
+    "prisma": "bunx prisma generate && bunx prisma generate --schema=prisma/cwm.schema.prisma",
+    "dev": "bun run src/main.ts"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.11",
+    "bun-types": "^1.0.9",
+    "prisma": "^5.5.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@bunsterjs/server": "^0.10.1",
+    "@prisma/client": "^5.5.2",
+    "axios": "^1.5.1",
+    "nodemailer": "^6.9.6",
+    "zod": "^3.22.4"
+  }
+}

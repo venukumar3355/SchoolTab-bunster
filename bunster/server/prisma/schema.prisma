@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model SoftwareAdim {
+  id               Int           @id @default(autoincrement())
+  softWareAdimName String
+  email            String        @unique
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updateAt         DateTime      @updatedAt()
+  deleatedAt       DateTime?
+  schoolAdmin      SchoolAdmin[]
+}
+
+model SchoolAdmin {
+  id           Int           @id @default(autoincrement())
+  schoolName   String
+  schoolEmail  String        @unique
+  schoolId     Int
+  createdById  Int?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updateAt     DateTime      @updatedAt()
+  deleatedAt   DateTime?
+  school       School        @relation(fields: [schoolId], references: [id])
+  SoftwareAdim SoftwareAdim? @relation(fields: [createdById], references: [id])
+}
+
+model School {
+  id          Int             @id @default(autoincrement())
+  adminName   String
+  email       String          @unique
+  mobile      String          @unique
+  address     String
+  pinCode     String
+  createdAt   DateTime        @default(now())
+  updateAt    DateTime        @updatedAt()
+  deleatedAt  DateTime?
+  password    AdminPassword[]
+  standerd    Standerd[]
+  schoolAdmin SchoolAdmin[]
+  teacher     Teacher[]
+}
+
+model AdminPassword {
+  id         Int       @id @default(autoincrement())
+  password   String
+  schoolId   Int
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updateAt   DateTime  @updatedAt()
+  deleatedAt DateTime?
+  school     School    @relation(fields: [schoolId], references: [id])
+}
+
+model Standerd {
+  id         Int       @id @default(autoincrement())
+  stdName    String    @unique
+  schoolId   Int
+  subjectId  Int
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updateAt   DateTime  @updatedAt()
+  deleatedAt DateTime?
+  School     School    @relation(fields: [schoolId], references: [id])
+  subject    Subject   @relation(fields: [subjectId], references: [id])
+  section    Section[]
+  student    Student[]
+}
+
+model Subject {
+  id                     Int        @id @default(autoincrement())
+  subjectName            String
+  subjectHandleTeacherId Int?
+  isActive               Boolean    @default(true)
+  createdAt              DateTime   @default(now())
+  updateAt               DateTime   @updatedAt()
+  deleatedAt             DateTime?
+  standerd               Standerd[]
+  teacher                Teacher[]
+  subjectHandleTeacher   Teacher?   @relation("handleSubject", fields: [subjectHandleTeacherId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Section {
+  id          Int       @id @default(autoincrement())
+  sectionName String
+  standerdId  Int
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updateAt    DateTime  @updatedAt()
+  deleatedAt  DateTime?
+  Standerd    Standerd  @relation(fields: [standerdId], references: [id])
+}
+
+model Teacher {
+  id               Int       @id @default(autoincrement())
+  schoolId         Int
+  teacherIdCardNum Int
+  teacherName      String
+  teacherEmail     String    @unique
+  qualification    String
+  mobile           String
+  subjectId        Int
+  address          String
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updateAt         DateTime  @updatedAt()
+  deleatedAt       DateTime?
+  school           School    @relation(fields: [schoolId], references: [id])
+  subject          Subject   @relation(fields: [subjectId], references: [id])
+  handleSubject    Subject[] @relation("handleSubject")
+}
+
+model Student {
+  id           Int       @id @default(autoincrement())
+  studentName  String
+  address      String
+  bloodGroup   String
+  birthdayDate String
+  fatherName   String
+  motherName   String
+  mobilenumber String
+  aadharNumber String
+  standerdId   Int
+  isParent     Boolean   @default(true)
+  isGaurdion   Boolean   @default(false)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updateAt     DateTime  @updatedAt()
+  deleatedAt   DateTime?
+  Standerd     Standerd  @relation(fields: [standerdId], references: [id])
+}
